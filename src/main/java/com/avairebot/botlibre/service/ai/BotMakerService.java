@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
@@ -76,7 +77,7 @@ public class BotMakerService implements IntelligenceService
 
         conversationDictionary  = new Hashtable<>();
 
-        if( botInstance.equals("invalid") || botMakerAppId.equals("invalid") || botInstance.equals("invalid"))
+        if( botInstance.equals("invalid") || botMakerAppId.equals("invalid"))
         {
             return;
         }
@@ -110,12 +111,12 @@ public class BotMakerService implements IntelligenceService
     private void processRequest(Message message, DatabaseEventHolder databaseEventHolder) {
         try
         {
-            String rawMessage = message.getContentStripped();
+            String[] split = message.getContentStripped().split(" ");
+            String rawMessage = String.join(" ", Arrays.copyOfRange(split, 1, split.length));
 
 
 
             object.addProperty("message",rawMessage);
-
 
             RequestBody body = RequestBody.create(JSON,object.toString());
 
@@ -130,6 +131,7 @@ public class BotMakerService implements IntelligenceService
                     .addHeader("Content-Type", "application/json")
                     .post(body)
                     .build();
+
             Response response = client.newCall(toSend).execute();
 
             if (!response.isSuccessful()) {
@@ -137,7 +139,7 @@ public class BotMakerService implements IntelligenceService
             }
             else
             {
-                String json = response.message();
+                String json = response.body().string();
                JSONObject obj = new JSONObject(json);
                 log.info(actionOutput
                                 .replace("%author%", generateUsername(message))
