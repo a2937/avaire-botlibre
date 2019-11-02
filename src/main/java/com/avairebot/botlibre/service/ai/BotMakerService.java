@@ -109,24 +109,8 @@ public class BotMakerService implements IntelligenceService
             String[] split = message.getContentStripped().split(" ");
             String rawMessage = String.join(" ", Arrays.copyOfRange(split, 1, split.length));
 
-            JsonObject object = new JsonObject();
 
-            object.addProperty("instance",botInstance);
-            object.addProperty("application",botMakerAppId);
-
-            if(!userId.equals("invalid"))
-            {
-                object.addProperty("user",userId);
-            }
-
-            if(!userPassword.equals("invalid"))
-            {
-                object.addProperty("password",userPassword);
-            }
-            
-            object.addProperty("message",rawMessage);
-
-            RequestBody body = RequestBody.create(JSON,object.toString());
+            RequestBody body = RequestBody.create(JSON,generateRequestBody(rawMessage).toString());
 
 
             Request toSend = new Request.Builder()
@@ -167,6 +151,27 @@ public class BotMakerService implements IntelligenceService
         {
             e.printStackTrace();
         }
+    }
+
+    private JsonObject generateRequestBody(String message)
+    {
+        JsonObject requestBody = new JsonObject();
+
+        requestBody.addProperty("instance",botInstance);
+        requestBody.addProperty("application",botMakerAppId);
+
+        if(!userId.equals("invalid"))
+        {
+            requestBody.addProperty("user",userId);
+        }
+
+        if(!userPassword.equals("invalid"))
+        {
+            requestBody.addProperty("password",userPassword);
+        }
+
+        requestBody.addProperty("message",message);
+        return requestBody;
     }
 
     private String generateUsername(Message message) {
