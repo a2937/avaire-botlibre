@@ -21,4 +21,6 @@
 #
 botAppId: ''
 botInstance: ''
+userId: ''
+userPassword: ''
 
