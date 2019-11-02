@@ -33,9 +33,13 @@ public class BotMakerService implements IntelligenceService
 
     private final OkHttpClient client = new OkHttpClient();
 
-    private JsonObject object = new JsonObject();
+    private String userId;
 
+    private String userPassword;
 
+    private String botMakerAppId;
+
+    private String botInstance;
 
     private static final String actionOutput = ConsoleColor.format(
             "%cyanExecuting Intelligence Action %cyan\" for:"
@@ -69,32 +73,15 @@ public class BotMakerService implements IntelligenceService
     public void registerService(AvaIre avaIre)
     {
 
-        String botMakerAppId = plugin.getConfig().getString("botAppId", "invalid");
-        String botInstance = plugin.getConfig().getString("botInstance", "invalid");
-        String userId = plugin.getConfig().getString("userId","invalid");
-        String userPassword = plugin.getConfig().getString("userPassword","invalid");
+        botMakerAppId = plugin.getConfig().getString("botAppId", "invalid");
+        botInstance = plugin.getConfig().getString("botInstance", "invalid");
+        userId = plugin.getConfig().getString("userId","invalid");
+        userPassword = plugin.getConfig().getString("userPassword","invalid");
 
         if( botInstance.equals("invalid") || botMakerAppId.equals("invalid"))
         {
             return;
         }
-
-
-
-
-        object.addProperty("instance",botInstance);
-        object.addProperty("application",botMakerAppId);
-
-        if(!userId.equals("invalid"))
-        {
-            object.addProperty("user",userId);
-        }
-
-        if(!userPassword.equals("invalid"))
-        {
-            object.addProperty("password",userPassword);
-        }
-
 
 
         executor = Executors.newFixedThreadPool(2);
@@ -122,8 +109,21 @@ public class BotMakerService implements IntelligenceService
             String[] split = message.getContentStripped().split(" ");
             String rawMessage = String.join(" ", Arrays.copyOfRange(split, 1, split.length));
 
+            JsonObject object = new JsonObject();
 
+            object.addProperty("instance",botInstance);
+            object.addProperty("application",botMakerAppId);
 
+            if(!userId.equals("invalid"))
+            {
+                object.addProperty("user",userId);
+            }
+
+            if(!userPassword.equals("invalid"))
+            {
+                object.addProperty("password",userPassword);
+            }
+            
             object.addProperty("message",rawMessage);
 
             RequestBody body = RequestBody.create(JSON,object.toString());
