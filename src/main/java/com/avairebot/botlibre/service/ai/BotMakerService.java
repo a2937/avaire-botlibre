@@ -135,8 +135,16 @@ public class BotMakerService implements IntelligenceService
             Response response = client.newCall(toSend).execute();
 
             if (!response.isSuccessful()) {
-                MessageFactory.makeError(message, response.toString()).queue();
+                if(response.body() == null)
+                {
+                    MessageFactory.makeError(message, response.toString()).queue();
+                }
+                else
+                {
+                    MessageFactory.makeError(message, response.body().string()).queue();
+                }
             }
+
             else
             {
                 String json = response.body().string();
