@@ -1,4 +1,4 @@
-package com.avairebot.botlibre.service.ai;
+package com.a2937.botlibre.service.ai;
 
 import com.avairebot.AvaIre;
 import com.avairebot.chat.ConsoleColor;
@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

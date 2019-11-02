@@ -1,8 +1,8 @@
 
-package com.avairebot.botlibre;
+package com.a2937.botlibre;
 
+import com.a2937.botlibre.service.ai.BotMakerService;
 import com.avairebot.plugin.JavaPlugin;
-import com.avairebot.botlibre.service.ai.BotMakerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

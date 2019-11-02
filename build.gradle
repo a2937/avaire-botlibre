@@ -1,6 +1,6 @@
 apply plugin: 'java'
 
-group 'com.avairebot'
+group 'com.a2937'
 version '0.0.2'
 description 'Adds an ai chatbot to AvaIre'
 
