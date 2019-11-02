@@ -1,5 +1,5 @@
 name: 'BotLibre'
-main: 'com.avairebot.botlibre.BotMakerMain'
+main: 'com.a2937.botlibre.BotMakerMain'
 version: '0.0.2'
 author: 'Chara <Chara#6274>'
 description: 'Registers the BotLibre AI service with AvaIre'
