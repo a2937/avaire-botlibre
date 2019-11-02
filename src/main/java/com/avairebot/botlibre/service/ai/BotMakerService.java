@@ -35,7 +35,6 @@ public class BotMakerService implements IntelligenceService
 
     private JsonObject object = new JsonObject();
 
-    private Dictionary<String, Long> conversationDictionary;
 
 
     private static final String actionOutput = ConsoleColor.format(
@@ -70,12 +69,10 @@ public class BotMakerService implements IntelligenceService
     public void registerService(AvaIre avaIre)
     {
 
-
-
         String botMakerAppId = plugin.getConfig().getString("botAppId", "invalid");
         String botInstance = plugin.getConfig().getString("botInstance", "invalid");
-
-        conversationDictionary  = new Hashtable<>();
+        String userId = plugin.getConfig().getString("userId","invalid");
+        String userPassword = plugin.getConfig().getString("userPassword","invalid");
 
         if( botInstance.equals("invalid") || botMakerAppId.equals("invalid"))
         {
@@ -84,8 +81,19 @@ public class BotMakerService implements IntelligenceService
 
 
 
+
         object.addProperty("instance",botInstance);
         object.addProperty("application",botMakerAppId);
+
+        if(!userId.equals("invalid"))
+        {
+            object.addProperty("user",userId);
+        }
+
+        if(!userPassword.equals("invalid"))
+        {
+            object.addProperty("password",userPassword);
+        }
 
 
 
@@ -120,11 +128,6 @@ public class BotMakerService implements IntelligenceService
 
             RequestBody body = RequestBody.create(JSON,object.toString());
 
-            String guildId = message.getGuild().getId();
-            if(conversationDictionary.get(guildId) != null)
-            {
-                object.addProperty("conversation",conversationDictionary.get(guildId));
-            }
 
             Request toSend = new Request.Builder()
                     .url("https://www.botlibre.com/rest/json/chat")
@@ -156,9 +159,6 @@ public class BotMakerService implements IntelligenceService
                                 .replace("%message%", message.getContentRaw())
                                 .replace("%response%", response.message()));
 
-                long key = obj.getLong("conversation");
-
-                conversationDictionary.put(message.getGuild().getId(),key);
 
                 MessageFactory.makeInfo(message,obj.get("message").toString()).queue();
             }
