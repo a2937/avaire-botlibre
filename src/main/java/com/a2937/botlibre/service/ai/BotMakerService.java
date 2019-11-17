@@ -6,6 +6,8 @@ import com.avairebot.contracts.ai.IntelligenceService;
 import com.avairebot.factories.MessageFactory;
 import com.avairebot.handlers.DatabaseEventHolder;
 import com.avairebot.plugin.JavaPlugin;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.core.entities.Message;
 import okhttp3.*;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class BotMakerService implements IntelligenceService
@@ -38,6 +41,8 @@ public class BotMakerService implements IntelligenceService
     private String botMakerAppId;
 
     private String botInstance;
+
+    private Cache<String, Long> conversationDictionary;
 
     private static final String actionOutput = ConsoleColor.format(
             "%cyanExecuting Intelligence Action %cyan\" for:"
@@ -75,6 +80,9 @@ public class BotMakerService implements IntelligenceService
         botInstance = plugin.getConfig().getString("botInstance", "invalid");
         userId = plugin.getConfig().getString("userId","invalid");
         userPassword = plugin.getConfig().getString("userPassword","invalid");
+        conversationDictionary  = CacheBuilder.newBuilder()
+                .expireAfterWrite(1, TimeUnit.DAYS)
+                .build();
 
         if( botInstance.equals("invalid") || botMakerAppId.equals("invalid"))
         {
@@ -108,7 +116,7 @@ public class BotMakerService implements IntelligenceService
             String rawMessage = String.join(" ", Arrays.copyOfRange(split, 1, split.length));
 
 
-            RequestBody body = RequestBody.create(JSON,generateRequestBody(rawMessage).toString());
+            RequestBody body = RequestBody.create(JSON,generateRequestBody(rawMessage,message.getGuild().getId()).toString());
 
 
             Request toSend = new Request.Builder()
@@ -141,7 +149,7 @@ public class BotMakerService implements IntelligenceService
                                 .replace("%message%", message.getContentRaw())
                                 .replace("%response%", response.message()));
 
-
+                conversationDictionary.put(message.getGuild().getId(),obj.getLong("conversation"));
                 MessageFactory.makeInfo(message,obj.get("message").toString()).queue();
             }
 
@@ -151,7 +159,7 @@ public class BotMakerService implements IntelligenceService
         }
     }
 
-    private JsonObject generateRequestBody(String message)
+    private JsonObject generateRequestBody(String message, String guildId)
     {
         JsonObject requestBody = new JsonObject();
 
@@ -166,6 +174,12 @@ public class BotMakerService implements IntelligenceService
         if(!userPassword.equals("invalid"))
         {
             requestBody.addProperty("password",userPassword);
+        }
+
+        if(conversationDictionary.getIfPresent(guildId) != null)
+        {
+            requestBody.addProperty("conversation",conversationDictionary.getIfPresent(guildId));
+
         }
 
         requestBody.addProperty("message",message);
