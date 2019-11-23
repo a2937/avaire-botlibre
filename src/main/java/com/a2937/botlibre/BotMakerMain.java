@@ -2,6 +2,7 @@
 package com.a2937.botlibre;
 
 import com.a2937.botlibre.service.ai.BotMakerService;
+import com.avairebot.config.EnvironmentOverride;
 import com.avairebot.plugin.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ public class BotMakerMain extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         reloadConfig();
+        EnvironmentOverride.overrideWithPrefix("BOTLIBRE", getConfig());
         getAvaire().getIntelligenceManager().registerService(new BotMakerService(this));
     }
 
