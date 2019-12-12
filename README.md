@@ -1,7 +1,7 @@
 BotLibre plugin
 ================
 
-The BotLibre plugin is a simple plugin that adds the [BotLibre]((https://www.botlibre.com/) chat bot service to the AvaIre Discord bot.
+The BotLibre plugin is a simple plugin that adds the [BotLibre](https://www.botlibre.com/) chat bot service to the AvaIre Discord bot.
 
 ## How to Use
 
